@@ -1,0 +1,41 @@
+GNU GENERAL PUBLIC LICENSE  
+Version 3, 29 June 2007  
+
+Copyright (C) [2025] [Andreas Müller]  
+
+Everyone is permitted to copy and distribute verbatim copies  
+of this license document, but changing it is not allowed.  
+
+### Preamble  
+The GNU General Public License is a free, copyleft license for software and other kinds of works.  
+
+The licenses for most software are designed to take away your freedom to share and change it. By contrast, the GNU General Public License is intended to guarantee your freedom to share and change all versions of a program—to make sure it remains free software for all its users.  
+
+For the full license text, see:  
+https://www.gnu.org/licenses/gpl-3.0.en.html  
+
+### License Terms (Summary)  
+1. **Freedom to use, modify, and distribute**: You can run, study, and change the software.  
+2. **Copyleft**: Any modified versions or distributions must also be licensed under GPL-3.0.  
+3. **Source Code Disclosure**: If you distribute the software, you must provide access to the source code.  
+4. **No Warranty**: The software is provided "as is," without any warranty.  
+
+### How to Apply This License  
+To apply the GPL-3.0 license to your project, add the following header to each source file:  
+
+```plaintext
+    [Your Software Name] - [Short Description]  
+    Copyright (C) [Year] [Your Name or Organization]  
+
+    This program is free software: you can redistribute it and/or modify  
+    it under the terms of the GNU General Public License as published by  
+    the Free Software Foundation, either version 3 of the License, or  
+    (at your option) any later version.  
+
+    This program is distributed in the hope that it will be useful,  
+    but WITHOUT ANY WARRANTY; without even the implied warranty of  
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the  
+    GNU General Public License for more details.  
+
+    You should have received a copy of the GNU General Public License  
+    along with this program. If not, see <https://www.gnu.org/licenses/>.

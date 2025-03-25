@@ -1,0 +1,15 @@
+Pillow==11.0.0
+torch==2.5.1
+pandas==2.2.3
+tqdm==4.67.0
+cryptography==43.0.3
+scipy==1.14.1
+torchvision==0.20.1
+matplotlib==3.9.2
+diffusers==0.31.0
+transformers==4.46.3
+accelerate==1.1.1
+protobuf==5.28.3
+sentencepiece==0.2.0
+beautifulsoup4==4.13.3
+ftfy==6.3.1
