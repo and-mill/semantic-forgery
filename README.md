@@ -1,4 +1,4 @@
-# [CVPR2025] Black-Box Forgery Attacks on Semantic Watermarks for Diffusion Models
+# [CVPR2025 Oral] Black-Box Forgery Attacks on Semantic Watermarks for Diffusion Models
 This repository hosts the PyTorch implementation for our paper "Black-Box Forgery Attacks on Semantic Watermarks for Diffusion Models", accepted at CVPR 2025.
 
 ![Semantic watermark forgery. The attacker can transfer the watermark from a watermarked reference image requested by Alice (here: the diving cat) into any cover image (here: the moon landing). The obtained image will be detected as watermarked and attributed to Alice by the service provider, eroding the trust in watermark-based detection and attribution of AI-generated content.](media/frontpage.jpg)
