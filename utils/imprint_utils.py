@@ -17,7 +17,7 @@ from torchvision.transforms.functional import to_pil_image, to_tensor
 
 from torch.utils.checkpoint import checkpoint
 
-from utils.image_utils import psnr_PIL
+from utils.image_utils import psnr_PIL, ssim_PIL
 from utils.wm.wm_provider import WmProvider
 
 
@@ -306,6 +306,7 @@ def validate(
         generated_PIL = None,
         message_bits_str_initial = None,
         do_psnr = True,
+        do_ssim = True,
         ):
     """
     Perform a validation with the target model provider and watermark provider.
@@ -321,6 +322,7 @@ def validate(
     @param generated_PIL: PIL.Image, the generated image
     @param message_bits_str_initial: str, the initial message bits
     @param do_psnr: bool, whether to calculate the psnr
+    @param do_ssim: bool, whether to calculate the ssim
 
     @return: dict, the results of the validation
     """
@@ -347,6 +349,12 @@ def validate(
     else:
         psnr = -1
 
+    # ssim
+    if do_ssim:
+        ssim = ssim_PIL(image_to_verify_PIL, original_PIL)[0]
+    else:
+        ssim = -1
+
     # ------------------------ Save results ---------------------
 
     # preare a dir to save the results
@@ -371,6 +379,7 @@ def validate(
         # meta
         "step": step,
         "psnr": psnr,
+        "ssim": ssim,
         # initial
         "message_bits_str_initial": message_bits_str_initial,
         # retrieved

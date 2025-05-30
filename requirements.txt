@@ -13,3 +13,5 @@ protobuf==5.28.3
 sentencepiece==0.2.0
 beautifulsoup4==4.13.3
 ftfy==6.3.1
+scikit-image==0.25.2
+torchutils==0.0.4

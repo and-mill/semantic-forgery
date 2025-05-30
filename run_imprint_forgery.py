@@ -162,7 +162,7 @@ results["detection_successful"] = detection_successful
 rows.append(results)
 
 # log
-print(f"Step {results['step']}, detection_success: {detection_successful}, bit accuracy: {results['bit_accuracy']:.5f}, p_value: {results['p_value']}, psnr: {results['psnr']:.5f}")
+print(f"Step {results['step']}, detection_success: {detection_successful}, bit accuracy: {results['bit_accuracy']:.5f}, p_value: {results['p_value']}, psnr: {results['psnr']:.5f}, ssim: {results['ssim']:.5f}")
 
 # training loop
 inverted_history = []
@@ -215,7 +215,7 @@ for step in tqdm.tqdm(range(args.steps)):
         rows.append(results)
 
         # log
-        print(f"Step {results['step']}, detection_success: {detection_successful}, bit accuracy: {results['bit_accuracy']:.5f}, p_value: {results['p_value']}, psnr: {results['psnr']:.5f}")
+        print(f"Step {results['step']}, detection_success: {detection_successful}, bit accuracy: {results['bit_accuracy']:.5f}, p_value: {results['p_value']}, psnr: {results['psnr']:.5f}, ssim: {results['ssim']:.5f}")
 
         # save metrics as csv every validation round
         df = pd.DataFrame(rows)

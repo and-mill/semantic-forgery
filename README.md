@@ -68,6 +68,9 @@ To avoid downloading large datasets unnecessarily, we provide a small sample of 
 
 We also provide a set of cover COCO images in /images.
 
+## Correction
+There was an issue with how PSNR was calculated in an earlier version of this repository (commit 43eec7e). Thank you [Anubhav Jain](https://github.com/anubhav1997) for pointing this out to us.
+
 <br><br>
 
 ### Imprint-Forgery Attack
@@ -90,14 +93,11 @@ python run_imprint_forgery.py  --wm_type GS  --cover_image_path 'images/stalin.j
 ```
 should produce outputs very similar to this:
 ```bash
-Step 0, detection_success: False, bit accuracy: 0.54688, p_value: 0.0, psnr: 31.68439
-  7%|█████████▉                                                                                                                                            | 10/151
-Step 10, detection_success: False, bit accuracy: 0.68359, p_value: 0.0, psnr: 31.15294
- 13%|███████████████████▊                                                                                                                                  | 20/151
-Step 20, detection_success: True, bit accuracy: 0.76562, p_value: 0.0, psnr: 30.72373
- 20%|█████████████████████████████▊                                                                                                                        | 30/151
-Step 30, detection_success: True, bit accuracy: 0.83203, p_value: 0.0, psnr: 30.48064
-...
+Step 0, detection_success: False, bit accuracy: 0.55469, p_value: 0.0, psnr: 27.42990, ssim: 0.81446
+  7%|██████████████████████████████                                                                        | 10/151
+Step 10, detection_success: False, bit accuracy: 0.70312, p_value: 0.0, psnr: 26.06924, ssim: 0.77792
+ 13%|████████████████████████████████████████████████████████████                                          | 20/151
+Step 20, detection_success: True, bit accuracy: 0.78906, p_value: 0.0, psnr: 24.58160, ssim: 0.73264
 ```
 Once the detection success is true, the Imprint-Forgery was successful and the target model recognized the image as watermarked.
 
@@ -133,14 +133,13 @@ python run_imprint_removal.py  --wm_type GS  --target_prompt_index 0
 ```
 should produce outputs like this:
 ```bash
-Step 0, detection_success: True, bit accuracy: 1.00000, p_value: 0.0, psnr: 34.76470
-  7%|███████▍                                                                                                         | 10/151
-Step 10, detection_success: True, bit accuracy: 0.89844, p_value: 0.0, psnr: 32.56701
- 13%|██████████████▉                                                                                                  | 20/151
-Step 20, detection_success: False, bit accuracy: 0.66406, p_value: 0.0, psnr: 31.43231
- 20%|██████████████████████▍                                                                                          | 30/151
-Step 30, detection_success: False, bit accuracy: 0.63281, p_value: 0.0, psnr: 30.93994
-...
+Step 0, detection_success: True, bit accuracy: 0.99219, p_value: 0.0, psnr: 30.24571, ssim: 0.97292
+  7%|██████████████████████████████                                                                        | 10/151
+Step 10, detection_success: True, bit accuracy: 0.89453, p_value: 0.0, psnr: 27.19203, ssim: 0.94479
+ 13%|████████████████████████████████████████████████████████████                                          | 20/151
+Step 20, detection_success: True, bit accuracy: 0.71484, p_value: 0.0, psnr: 24.78829, ssim: 0.91063
+ 20%|██████████████████████████████████████████████████████████████████████████████████████████            | 30/151
+Step 30, detection_success: False, bit accuracy: 0.60938, p_value: 0.0, psnr: 23.42042, ssim: 0.88683
 ```
 A full run with 150 steps might take up to 40 minutes, but first successful detection evasion might occur much earlier depending on the target model.
 

@@ -19,9 +19,13 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import numpy as np
 
+from skimage.metrics import structural_similarity as ssim
+
 import torchvision.models as models
 import torchvision.transforms as transforms
 from PIL import Image
+
+from torchmetrics.image import PeakSignalNoiseRatio
 
 
 def distort_images(images: typing.Union[Image.Image, typing.List[Image.Image]],
@@ -330,22 +334,43 @@ def l2_distance(tensor1: torch.Tensor, tensor2: torch.Tensor) -> torch.Tensor:
     return torch.norm(tensor1 - tensor2, p=2).item()
 
 
-def psnr(tensor1: torch.Tensor, tensor2: torch.Tensor, max_pixel_value: float = 1.0) -> torch.Tensor:
+def ssim_PIL(img1, img2):
     """
-    Computes the Peak Signal-to-Noise Ratio (PSNR) between two tensors.
+    Calculate the SSIM (Structural Similarity Index) between two PIL images.
+    
+    Args:
+        img1 (PIL.Image): First input image.
+        img2 (PIL.Image): Second input image.
+    
+    Returns:
+        float: The SSIM index value.
+        ndarray: The full SSIM image.
+    """
+    # Ensure images are converted to numpy arrays and are in grayscale
+    img1_np = np.array(img1.convert('L'))  # Convert image to grayscale
+    img2_np = np.array(img2.convert('L'))  # Convert image to grayscale
+    
+    # Calculate SSIM
+    ssim_index, ssim_map = ssim(img1_np, img2_np, full=True)
+    
+    return ssim_index, ssim_map
+
+
+def psnr(tensor1: torch.Tensor, tensor2: torch.Tensor, max_pixel_value: float = 1.0) -> float:
+    """
+    Computes the Peak Signal-to-Noise Ratio (PSNR) using TorchMetrics.
 
     Args:
-        tensor1 (torch.Tensor): The first tensor.
-        tensor2 (torch.Tensor): The second tensor.
-        max_pixel_value (float): The maximum possible pixel value of the images (default is 1.0 for normalized images).
+        tensor1 (torch.Tensor): First image tensor (BxCxHxW or CxHxW).
+        tensor2 (torch.Tensor): Second image tensor.
+        max_pixel_value (float): Max pixel value (e.g., 1.0 for normalized, 255 for uint8).
 
     Returns:
-        torch.Tensor: The PSNR value between the two tensors.
+        float: PSNR value.
     """
-    mse = F.mse_loss(tensor1, tensor2)
-    if mse == 0:
-        return torch.tensor(float('inf')).item()  # Infinite PSNR for identical images
-    return 20 * torch.log10(max_pixel_value / torch.sqrt(mse)).item()
+    psnr_metric = PeakSignalNoiseRatio(data_range=max_pixel_value)
+        
+    return psnr_metric(tensor1, tensor2).item()
 
 
 def psnr_PIL(img1: Image, img2: Image) -> float:
@@ -357,17 +382,15 @@ def psnr_PIL(img1: Image, img2: Image) -> float:
     
     @return: The PSNR value between the two images.
     """
-    # Convert images to numpy arrays
-    arr1 = np.array(img1)
-    arr2 = np.array(img2)
+    arr1 = torch.tensor(np.array(img1)).permute(2, 0, 1).float() / 255.0
+    arr2 = torch.tensor(np.array(img2)).permute(2, 0, 1).float() / 255.0
     
-    # Calculate MSE (Mean Squared Error)
-    mse = np.mean((arr1 - arr2) ** 2)
+    # Add batch dimension
+    arr1 = arr1.unsqueeze(0)
+    arr2 = arr2.unsqueeze(0)
     
-    # Avoid division by zero
-    if mse == 0:
-        return float('inf')
-    
-    # Calculate PSNR
-    pixel_max = 255.0
-    return 20 * math.log10(pixel_max / math.sqrt(mse))
+    # Compute PSNR with TorchMetrics
+    psnr_metric = PeakSignalNoiseRatio(data_range=1.0)
+    psnr_value = psnr_metric(arr1, arr2).item()
+
+    return psnr_value
