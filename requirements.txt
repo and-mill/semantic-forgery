@@ -15,3 +15,4 @@ beautifulsoup4==4.13.3
 ftfy==6.3.1
 scikit-image==0.25.2
 torchutils==0.0.4
+lpips==0.1.4

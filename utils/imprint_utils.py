@@ -17,7 +17,7 @@ from torchvision.transforms.functional import to_pil_image, to_tensor
 
 from torch.utils.checkpoint import checkpoint
 
-from utils.image_utils import psnr_PIL, ssim_PIL
+from utils.image_utils import psnr_PIL, ssim_PIL, msssim_PIL, lpips_PIL
 from utils.wm.wm_provider import WmProvider
 
 
@@ -307,6 +307,10 @@ def validate(
         message_bits_str_initial = None,
         do_psnr = True,
         do_ssim = True,
+        do_msssim = True,
+        do_lpips = True,
+        lpips_loss_fn=None,
+        device="cuda" if torch.cuda.is_available() else "cpu"
         ):
     """
     Perform a validation with the target model provider and watermark provider.
@@ -323,6 +327,9 @@ def validate(
     @param message_bits_str_initial: str, the initial message bits
     @param do_psnr: bool, whether to calculate the psnr
     @param do_ssim: bool, whether to calculate the ssim
+    @param do_msssim: bool, whether to calculate the msssim
+    @param do_lpips: bool, whether to calculate the lpips
+    @param lpips_loss_fn: callable, the lpips loss function, if None, will use the default one
 
     @return: dict, the results of the validation
     """
@@ -355,6 +362,18 @@ def validate(
     else:
         ssim = -1
 
+    # msssim
+    if do_msssim:
+        msssim = msssim_PIL(image_to_verify_PIL, original_PIL)
+    else:
+        msssim = -1
+
+    # lpips
+    if do_lpips:
+        lpips = lpips_PIL(image_to_verify_PIL, original_PIL, loss_fn=lpips_loss_fn, device=device)
+    else:
+        lpips = -1
+
     # ------------------------ Save results ---------------------
 
     # preare a dir to save the results
@@ -380,6 +399,8 @@ def validate(
         "step": step,
         "psnr": psnr,
         "ssim": ssim,
+        "msssim": msssim,
+        "lpips": lpips,
         # initial
         "message_bits_str_initial": message_bits_str_initial,
         # retrieved

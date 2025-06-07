@@ -130,6 +130,10 @@ with torch.no_grad():
         num_inference_steps_target=args.num_inference_steps_target,
         step=-1,
         message_bits_str_initial=message_bits_str_initial,
+        do_psnr=False,
+        do_ssim=False,
+        do_msssim=False,
+        do_lpips=False,
         )
     # check if detection was successfull
     detection_successful = check_if_detection_successful(wm_type=args.wm_type,
@@ -139,7 +143,7 @@ with torch.no_grad():
     rows.append(results)
 
     # log
-    print(f"(Benign image) detection_success: {detection_successful}, bit accuracy: {results['bit_accuracy']:.5f}, p_value: {results['p_value']}, psnr: {results['psnr']:.5f}")
+    print(f"(Benign image) detection_success: {detection_successful}, bit accuracy: {results['bit_accuracy']:.5f}, p_value: {results['p_value']}")
     
     # --------------------------------------------------------------- PHASE 2 ----------------------------------------------------------------------
     print("phase 2: invert using attacker model")
@@ -183,6 +187,8 @@ with torch.no_grad():
         message_bits_str_initial=message_bits_str_initial,
         do_psnr=False,
         do_ssim=False,
+        do_msssim=False,
+        do_lpips=False,
         )
     # check if detection was successfull
     detection_successful = check_if_detection_successful(wm_type=args.wm_type,
@@ -192,7 +198,7 @@ with torch.no_grad():
     rows.append(results)
 
     # log
-    print(f"(Harmful image) detection_success: {detection_successful}, bit accuracy: {results['bit_accuracy']:.5f}, p_value: {results['p_value']}, psnr: {results['psnr']:.5f}")
+    print(f"(Harmful image) detection_success: {detection_successful}, bit accuracy: {results['bit_accuracy']:.5f}, p_value: {results['p_value']}")
 
     # save metrics as csv
     df = pd.DataFrame(rows)

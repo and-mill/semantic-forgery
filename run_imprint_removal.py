@@ -28,6 +28,8 @@ from utils.prompt_utils import PROMPTS_SD_LIST
 
 from utils.utils import set_random_seed
 
+import lpips
+
 
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -69,6 +71,9 @@ args, unknown_args = parser.parse_known_args()
 
 # set seeds
 set_random_seed(args.seed)
+
+# set up lpips
+lpips_loss_fn = lpips.LPIPS(net='alex').to(device=DEVICE)
 
 # retrieve the detection threshold for the settings
 detection_threshold = get_detection_threshold(args.wm_type, args.modelid_target)
@@ -138,6 +143,8 @@ results = validate(
      num_inference_steps_target=args.num_inference_steps_target,
      step=-1,
      message_bits_str_initial=message_bits_str_initial,
+     lpips_loss_fn=lpips_loss_fn,
+     device=DEVICE,
      )
 # check if detection was successfull
 detection_successful = check_if_detection_successful(wm_type=args.wm_type,
@@ -147,7 +154,16 @@ results["detection_successful"] = detection_successful
 rows.append(results)
 
 # log
-print(f"Step {results['step']}, detection_success: {detection_successful}, bit accuracy: {results['bit_accuracy']:.5f}, p_value: {results['p_value']}, psnr: {results['psnr']:.5f}, ssim: {results['ssim']:.5f}")
+print(
+    f"Step {results['step']}, "
+    f"detection_success: {detection_successful}, "
+    f"bit accuracy: {results['bit_accuracy']:.5f}, "
+    f"p_value: {results['p_value']}, "
+    f"psnr: {results['psnr']:.5f}, "
+    f"ssim: {results['ssim']:.5f}, "
+    f"ms-ssim: {results['msssim']:.5f}, "
+    f"lpips: {results['lpips']:.5f}"
+)
 
 # training loop
 inverted_history = []
@@ -180,6 +196,8 @@ for step in tqdm.tqdm(range(args.steps)):
             num_inference_steps_target=args.num_inference_steps_target,
             step=step,
             message_bits_str_initial=message_bits_str_initial,
+            lpips_loss_fn=lpips_loss_fn,
+            device=DEVICE,
             )
         # check if detection was successfull
         detection_successful = check_if_detection_successful(wm_type=args.wm_type,
@@ -189,7 +207,16 @@ for step in tqdm.tqdm(range(args.steps)):
         rows.append(results)
 
         # log
-        print(f"Step {results['step']}, detection_success: {detection_successful}, bit accuracy: {results['bit_accuracy']:.5f}, p_value: {results['p_value']}, psnr: {results['psnr']:.5f}, ssim: {results['ssim']:.5f}")
+        print(
+            f"Step {results['step']}, "
+            f"detection_success: {detection_successful}, "
+            f"bit accuracy: {results['bit_accuracy']:.5f}, "
+            f"p_value: {results['p_value']}, "
+            f"psnr: {results['psnr']:.5f}, "
+            f"ssim: {results['ssim']:.5f}, "
+            f"ms-ssim: {results['msssim']:.5f}, "
+            f"lpips: {results['lpips']:.5f}"
+        )
 
         # save metrics as csv every validation round
         df = pd.DataFrame(rows)

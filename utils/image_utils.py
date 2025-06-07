@@ -25,7 +25,9 @@ import torchvision.models as models
 import torchvision.transforms as transforms
 from PIL import Image
 
-from torchmetrics.image import PeakSignalNoiseRatio
+from torchmetrics.image import PeakSignalNoiseRatio, MultiScaleStructuralSimilarityIndexMeasure
+
+import lpips
 
 
 def distort_images(images: typing.Union[Image.Image, typing.List[Image.Image]],
@@ -188,23 +190,6 @@ def distort_images(images: typing.Union[Image.Image, typing.List[Image.Image]],
     return distorted_images if was_wrapped else distorted_images[0]
 
 
-def psnr(img1, img2):
-    # Convert images to numpy arrays
-    arr1 = np.array(img1)
-    arr2 = np.array(img2)
-    
-    # Calculate MSE (Mean Squared Error)
-    mse = np.mean((arr1 - arr2) ** 2)
-    
-    # Avoid division by zero
-    if mse == 0:
-        return float('inf')
-    
-    # Calculate PSNR
-    pixel_max = 255.0
-    return 20 * math.log10(pixel_max / math.sqrt(mse))
-
-
 def load_pil(filename: str, dir_name: str = "cache"):
     """
     load a PIL image from a file
@@ -334,18 +319,26 @@ def l2_distance(tensor1: torch.Tensor, tensor2: torch.Tensor) -> torch.Tensor:
     return torch.norm(tensor1 - tensor2, p=2).item()
 
 
-def ssim_PIL(img1, img2):
+def ssim_PIL(img1: Image.Image, img2: Image.Image):
     """
     Calculate the SSIM (Structural Similarity Index) between two PIL images.
     
     Args:
-        img1 (PIL.Image): First input image.
-        img2 (PIL.Image): Second input image.
+        img1 (Image): First input image.
+        img2 (Image): Second input image.
     
     Returns:
         float: The SSIM index value.
         ndarray: The full SSIM image.
     """
+
+    # assert PIL
+    if not isinstance(img1, Image.Image) or not isinstance(img2, Image.Image):
+        raise ValueError("Both inputs must be PIL Image objects.")
+    
+    img1 = img1.convert('RGB')
+    img2 = img2.convert('RGB')
+
     # Ensure images are converted to numpy arrays and are in grayscale
     img1_np = np.array(img1.convert('L'))  # Convert image to grayscale
     img2_np = np.array(img2.convert('L'))  # Convert image to grayscale
@@ -354,6 +347,72 @@ def ssim_PIL(img1, img2):
     ssim_index, ssim_map = ssim(img1_np, img2_np, full=True)
     
     return ssim_index, ssim_map
+
+
+# method for MS-SSIM
+def msssim_PIL(img1: Image.Image, img2: Image.Image):
+    """
+    Calculate the Multi-Scale Structural Similarity Index (MS-SSIM) between two PIL images using a reference implementation.
+
+    Args:
+        img1 (Image.Image): First input image.
+        img2 (Image.Image): Second input image.
+        weights (list, optional): Weights for each scale. If None, default weights are used by the reference implementation.
+
+    Returns:
+        float: The MS-SSIM index value.
+    """
+
+    # assert PIL
+    if not isinstance(img1, Image.Image) or not isinstance(img2, Image.Image):
+        raise ValueError("Both inputs must be PIL Image objects.")
+    
+    img1 = img1.convert('RGB')
+    img2 = img2.convert('RGB')
+
+    # Convert images to torch tensors, normalized to [0,1], shape [1, C, H, W]
+    arr1 = torch.tensor(np.array(img1)).permute(2, 0, 1).float() / 255.0
+    arr2 = torch.tensor(np.array(img2)).permute(2, 0, 1).float() / 255.0
+    arr1 = arr1.unsqueeze(0)
+    arr2 = arr2.unsqueeze(0)
+
+    msssim_metric = MultiScaleStructuralSimilarityIndexMeasure(data_range=1.0)
+    msssim_value = msssim_metric(arr1, arr2).item()
+    return msssim_value
+
+
+# add lpips using some reference implementation
+def lpips_PIL(img1: Image.Image, img2: Image.Image, loss_fn, device) -> float:
+    """
+    Calculate the LPIPS (Learned Perceptual Image Patch Similarity) between two PIL images using the reference implementation.
+
+    @param img1: The first PIL image.
+    @param img2: The second PIL image.
+    @param loss_fn: The LPIPS loss function, e.g., lpips.LPIPS(net='alex').
+    @param device: The device to run the computation on, e.g., "cpu" or "cuda".
+
+    @return: The LPIPS value between the two images.
+    """
+
+    if loss_fn is None:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        loss_fn = lpips.LPIPS(net='alex')
+    loss_fn = loss_fn.to(device=device)
+
+    # assert PIL
+    if not isinstance(img1, Image.Image) or not isinstance(img2, Image.Image):
+        raise ValueError("Both inputs must be PIL Image objects.")
+
+    # Convert images to torch tensors, normalized to [-1, 1], shape [1, 3, H, W]
+    arr1 = torch.tensor(np.array(img1.convert('RGB'))).to(device=device).permute(2, 0, 1).float() / 255.0
+    arr2 = torch.tensor(np.array(img2.convert('RGB'))).to(device=device).permute(2, 0, 1).float() / 255.0
+    arr1 = arr1 * 2 - 1
+    arr2 = arr2 * 2 - 1
+    arr1 = arr1.unsqueeze(0)
+    arr2 = arr2.unsqueeze(0)
+
+    lpips_value = loss_fn(arr1, arr2).detach().cpu().item()
+    return lpips_value
 
 
 def psnr(tensor1: torch.Tensor, tensor2: torch.Tensor, max_pixel_value: float = 1.0) -> float:
@@ -382,6 +441,11 @@ def psnr_PIL(img1: Image, img2: Image) -> float:
     
     @return: The PSNR value between the two images.
     """
+
+    # assert PIL
+    if not isinstance(img1, Image.Image) or not isinstance(img2, Image.Image):
+        raise ValueError("Both inputs must be PIL Image objects.")
+
     arr1 = torch.tensor(np.array(img1)).permute(2, 0, 1).float() / 255.0
     arr2 = torch.tensor(np.array(img2)).permute(2, 0, 1).float() / 255.0
     

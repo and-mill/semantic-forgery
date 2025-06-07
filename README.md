@@ -93,11 +93,13 @@ python run_imprint_forgery.py  --wm_type GS  --cover_image_path 'images/stalin.j
 ```
 should produce outputs very similar to this:
 ```bash
-Step 0, detection_success: False, bit accuracy: 0.55469, p_value: 0.0, psnr: 27.42990, ssim: 0.81446
-  7%|██████████████████████████████                                                                        | 10/151
-Step 10, detection_success: False, bit accuracy: 0.70312, p_value: 0.0, psnr: 26.06924, ssim: 0.77792
- 13%|████████████████████████████████████████████████████████████                                          | 20/151
-Step 20, detection_success: True, bit accuracy: 0.78906, p_value: 0.0, psnr: 24.58160, ssim: 0.73264
+Step 0, detection_success: False, bit accuracy: 0.56250, p_value: 0.0, psnr: 27.42994, ssim: 0.81447, ms-ssim: 0.95628, lpips: 0.04564
+  7%|██████████▌                                                                                                                                                    | 10/151
+Step 10, detection_success: False, bit accuracy: 0.69531, p_value: 0.0, psnr: 26.06885, ssim: 0.77792, ms-ssim: 0.93613, lpips: 0.06027
+ 13%|█████████████████████                                                                                                                                          | 20/151
+ Step 20, detection_success: True, bit accuracy: 0.79297, p_value: 0.0, psnr: 24.58068, ssim: 0.73256, ms-ssim: 0.90834, lpips: 0.08567
+ 20%|███████████████████████████████▌                                                                                                                               | 30/151
+ Step 30, detection_success: True, bit accuracy: 0.84375, p_value: 0.0, psnr: 23.58041, ssim: 0.69835, ms-ssim: 0.88440, lpips: 0.10649
 ```
 Once the detection success is true, the Imprint-Forgery was successful and the target model recognized the image as watermarked.
 
@@ -133,13 +135,13 @@ python run_imprint_removal.py  --wm_type GS  --target_prompt_index 0
 ```
 should produce outputs like this:
 ```bash
-Step 0, detection_success: True, bit accuracy: 0.99219, p_value: 0.0, psnr: 30.24571, ssim: 0.97292
-  7%|██████████████████████████████                                                                        | 10/151
-Step 10, detection_success: True, bit accuracy: 0.89453, p_value: 0.0, psnr: 27.19203, ssim: 0.94479
- 13%|████████████████████████████████████████████████████████████                                          | 20/151
-Step 20, detection_success: True, bit accuracy: 0.71484, p_value: 0.0, psnr: 24.78829, ssim: 0.91063
- 20%|██████████████████████████████████████████████████████████████████████████████████████████            | 30/151
-Step 30, detection_success: False, bit accuracy: 0.60938, p_value: 0.0, psnr: 23.42042, ssim: 0.88683
+Step 0, detection_success: True, bit accuracy: 0.99219, p_value: 0.0, psnr: 30.24567, ssim: 0.97292, ms-ssim: 0.98541, lpips: 0.01133
+  7%|██████████▌                                                                                                                                                    | 10/151
+Step 10, detection_success: True, bit accuracy: 0.89844, p_value: 0.0, psnr: 27.21097, ssim: 0.94498, ms-ssim: 0.96600, lpips: 0.02439
+ 13%|█████████████████████                                                                                                                                          | 20/151
+Step 20, detection_success: True, bit accuracy: 0.71094, p_value: 0.0, psnr: 24.81563, ssim: 0.91094, ms-ssim: 0.93951, lpips: 0.04336
+ 20%|███████████████████████████████▌                                                                                                                               | 30/151
+Step 30, detection_success: False, bit accuracy: 0.60156, p_value: 0.0, psnr: 23.44698, ssim: 0.88706, ms-ssim: 0.91831, lpips: 0.05899
 ```
 A full run with 150 steps might take up to 40 minutes, but first successful detection evasion might occur much earlier depending on the target model.
 
@@ -166,12 +168,12 @@ should look very similar to this:
 ```bash
 phase 1: generate target image
 Loading pipeline components...: 100%|████████████████████████████████████████████████████████████████████████████| 7/7
-(Benign image) detection_success: True, bit accuracy: 1.00000, p_value: 0.0, psnr: inf
+(Benign image) detection_success: True, bit accuracy: 1.00000, p_value: 0.0
 phase 2: invert using attacker model
 Loading pipeline components...: 100%|████████████████████████████████████████████████████████████████████████████| 6/6
 phase 3: generate attacker image
 phase 4: invert using target model and verify watermark
-(Harmful image) detection_success: True, bit accuracy: 0.96484, p_value: 0.0, psnr: -1.00000
+(Harmful image) detection_success: True, bit accuracy: 0.96484, p_value: 0.0
 ```
 
 A full run will only take about 30 seconds.
