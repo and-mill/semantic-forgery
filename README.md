@@ -8,12 +8,13 @@ This repository hosts the PyTorch implementation for our paper "Black-Box Forger
 
 Please cite as follows:
 ```
-@InProceedings{Mueller_2025_CVPR,
-  author    = {Andreas Müller and Denis Lukovnikov and Jonas Thietke and Asja Fischer and Erwin Quiring},
-  title     = {Black-Box Forgery Attacks on Semantic Watermarks for Diffusion Models},
-  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
-  month     = {June},
-  year      = {2025},
+@InProceedings{Muller_2025_CVPR,
+    author    = {M\"uller, Andreas and Lukovnikov, Denis and Thietke, Jonas and Fischer, Asja and Quiring, Erwin},
+    title     = {Black-Box Forgery Attacks on Semantic Watermarks for Diffusion Models},
+    booktitle = {Proceedings of the Computer Vision and Pattern Recognition Conference (CVPR)},
+    month     = {June},
+    year      = {2025},
+    pages     = {20937-20946}
 }
 ```
 
