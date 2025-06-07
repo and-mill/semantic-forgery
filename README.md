@@ -98,9 +98,9 @@ Step 0, detection_success: False, bit accuracy: 0.56250, p_value: 0.0, psnr: 27.
   7%|██████████▌                                                                                                                                                    | 10/151
 Step 10, detection_success: False, bit accuracy: 0.69531, p_value: 0.0, psnr: 26.06885, ssim: 0.77792, ms-ssim: 0.93613, lpips: 0.06027
  13%|█████████████████████                                                                                                                                          | 20/151
- Step 20, detection_success: True, bit accuracy: 0.79297, p_value: 0.0, psnr: 24.58068, ssim: 0.73256, ms-ssim: 0.90834, lpips: 0.08567
+Step 20, detection_success: True, bit accuracy: 0.79297, p_value: 0.0, psnr: 24.58068, ssim: 0.73256, ms-ssim: 0.90834, lpips: 0.08567
  20%|███████████████████████████████▌                                                                                                                               | 30/151
- Step 30, detection_success: True, bit accuracy: 0.84375, p_value: 0.0, psnr: 23.58041, ssim: 0.69835, ms-ssim: 0.88440, lpips: 0.10649
+Step 30, detection_success: True, bit accuracy: 0.84375, p_value: 0.0, psnr: 23.58041, ssim: 0.69835, ms-ssim: 0.88440, lpips: 0.10649
 ```
 Once the detection success is true, the Imprint-Forgery was successful and the target model recognized the image as watermarked.
 
