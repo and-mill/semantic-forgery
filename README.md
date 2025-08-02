@@ -180,3 +180,14 @@ phase 4: invert using target model and verify watermark
 A full run will only take about 30 seconds.
 As some readers might not want to see very harmful content (blood etc.), we added only less harmfull prompts from the I2P dataset.
 You can also just set custom prompts with --target_prompt and --attacker_prompt.
+
+### Reprompting Attack+ (Att+)
+
+We do not provide code for this modification. However, is is rather simple. Here, the attacker still has one reference image. They invert the image using the attacker model.
+Then, instead of regenerating the image using one (inappropriate prompt), they use multiple. In the paper, we used 3.
+In the case of Gaussian Shading, teh attacker can also resample the latent multiple times.
+In the paper, we did that 3 times.
+Resampling can be enabled using the --resample option in reprompting.py
+This totals to 3 attack instances per watermarked reference image for Tree-Ring, and 9 for Gaussian Shading.
+In Att+, we then only report the best performing attack instance, so if just one out of 3 (TR) or 9 (GS) attack instances is leads to successful detection by the target model, the attack is counted as successfull.
+This is a simple way for the attacker to increase their success,w hile still only inverting/havoing access to a single watermarked reference image.
