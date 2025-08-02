@@ -7,7 +7,6 @@ import math
 from PIL import Image, ImageFilter
 
 import torch
-import torch.nn.functional as F
 
 from torchvision import transforms
 
@@ -15,7 +14,6 @@ import numpy as np
 
 import uuid
 
-import matplotlib.pyplot as plt
 from PIL import Image
 import numpy as np
 
@@ -188,6 +186,68 @@ def distort_images(images: typing.Union[Image.Image, typing.List[Image.Image]],
         distorted_images.append(img)
 
     return distorted_images if was_wrapped else distorted_images[0]
+
+
+def resize_tensor(img: torch.Tensor, resolution: int, seed: int = None) -> torch.Tensor:
+    "Use this for resizing torch tensors - handles 3D (C,H,W) or 4D (B,C,H,W)"
+    
+    # Handle 3D tensor (C, H, W) by adding batch dimension
+    if img.dim() == 3:
+        img = img.unsqueeze(0)  # Add batch dimension
+        remove_batch = True
+    elif img.dim() == 4:
+        remove_batch = False
+    else:
+        raise ValueError("Input tensor must be 3D (C,H,W) or 4D (B,C,H,W)")
+    
+    # Get the current image size
+    _, _, height, width = img.shape
+    
+    # If image is smaller than desired resolution, resize it first
+    if width < resolution or height < resolution:
+        # Scale up maintaining aspect ratio
+        scale = max(resolution / width, resolution / height)
+        new_width = int(width * scale)
+        new_height = int(height * scale)
+        img = torch.nn.functional.interpolate(img, size=(new_height, new_width), mode='bilinear', align_corners=False)
+    
+    # Apply random crop to get the desired resolution
+    if seed is not None:
+        torch.manual_seed(seed)
+    transform = transforms.Compose([
+        transforms.RandomCrop(resolution),
+    ])
+    # Apply transform to each image in the batch
+    result = torch.stack([transform(img_single) for img_single in img])
+    
+    # Remove batch dimension if input was 3D
+    if remove_batch:
+        result = result.squeeze(0)
+    
+    return result
+    
+
+def resize_PIL(img: Image.Image, resolution: int, seed: int = None) -> Image.Image:
+    "Use this for resizing PIL images"
+
+    # Get the current image size
+    width, height = img.size
+    
+    # If image is smaller than desired resolution, resize it first
+    if width < resolution or height < resolution:
+        # Scale up maintaining aspect ratio
+        scale = max(resolution / width, resolution / height)
+        new_width = int(width * scale)
+        new_height = int(height * scale)
+        img = img.resize((new_width, new_height), Image.LANCZOS)
+    
+    # Apply random crop to get the desired resolution
+    if seed is not None:
+        torch.manual_seed(seed)
+    transform = transforms.Compose([
+        transforms.RandomCrop(resolution),
+    ])
+    return transform(img)
 
 
 def load_pil(filename: str, dir_name: str = "cache"):
