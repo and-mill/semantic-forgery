@@ -14,7 +14,7 @@ from .PixArt_provider import PixArtPipeProvider
 
 # Map model id onto pipe. Add more if needed
 PIPE_PROVIDERS = {
-    'stabilityai/stable-diffusion-2-1-base': SDPipeProvider,
+    'Manojb/stable-diffusion-2-1-base': SDPipeProvider,  # changed from stabilityai/stable-diffusion-2-1-base, because stabilityAI took down SD2.1
     'stabilityai/stable-diffusion-xl-base-1.0': SDXLPipeProvider,
     'PixArt-alpha/PixArt-Sigma-XL-2-512-MS': PixArtPipeProvider,
     # FLUX see below

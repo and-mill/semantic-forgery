@@ -21,7 +21,7 @@ from utils.image_utils import psnr_PIL, ssim_PIL, msssim_PIL, lpips_PIL
 from utils.wm.wm_provider import WmProvider
 
 
-def load_pipe(modelid="stabilityai/stable-diffusion-2-1-base", scheduler="DDIM", device="cuda") -> typing.Tuple[StableDiffusionPipeline, DDIMScheduler, DDIMInverseScheduler]:
+def load_attacker_pipe(modelid="Manojb/stable-diffusion-2-1-base", scheduler="DDIM", device="cuda") -> typing.Tuple[StableDiffusionPipeline, DDIMScheduler, DDIMInverseScheduler]:
     """
     Simple util for loading a attacker pipe and the inverse scheduler which we need later for inversion.
 
@@ -32,7 +32,6 @@ def load_pipe(modelid="stabilityai/stable-diffusion-2-1-base", scheduler="DDIM",
     @return: tuple, the pipe, forward scheduler, inverse scheduler
     """
 
-    modelid = "stabilityai/stable-diffusion-2-1-base" if modelid is None else modelid
     if scheduler == "DDIM":
         scheduler = DDIMScheduler.from_pretrained(modelid, subfolder='scheduler', torch_dtype=torch.float32)
         inverse_scheduler = DDIMInverseScheduler.from_pretrained(modelid, subfolder='scheduler', torch_dtype=torch.float32)

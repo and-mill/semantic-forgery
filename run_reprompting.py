@@ -50,7 +50,7 @@ parser.add_argument("--guidance_scale_target", type=float, default=7.5)  # 20 fo
 parser.add_argument("--num_inference_steps_target", type=int, default=50)  # 3.5 for FLUX
 
 # attacker model
-parser.add_argument("--modelid_attacker", type=str, default="stabilityai/stable-diffusion-2-1-base")
+parser.add_argument("--modelid_attacker", type=str, default="Manojb/stable-diffusion-2-1-base")  # changed from stabilityai/stable-diffusion-2-1-base, because stabilityAI took down SD2.1
 parser.add_argument("--scheduler_attacker", type=str, default="DDIM")
 parser.add_argument("--num_inference_steps_attacker", type=int, default=50)
 parser.add_argument("--guidance_scale_attacker", type=float, default=7.5)

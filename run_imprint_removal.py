@@ -53,7 +53,7 @@ parser.add_argument("--num_inference_steps_target", type=int, default=50)  # 3.5
 parser.add_argument("--guidance_scale_target", type=float, default=7.5)  # 20 for FLUX
 
 # attacker model
-parser.add_argument("--modelid_attacker", type=str, default="stabilityai/stable-diffusion-2-1-base")
+parser.add_argument("--modelid_attacker", type=str, default="Manojb/stable-diffusion-2-1-base")  # changed from stabilityai/stable-diffusion-2-1-base, because stabilityAI took down SD2.1
 parser.add_argument("--scheduler_attacker", type=str, default="DDIM")
 parser.add_argument("--num_inference_steps_attacker", type=int, default=50)
 
@@ -87,7 +87,7 @@ target_prompt = PROMPTS_SD_LIST[args.target_prompt_index] if args.target_prompt 
 # The pipe used by the attacker (SD2.1)
 # For imprinting-type attacks, we do not use our usual pipe-wrappers on the attacker' side because the differentiable pipe requires a few extra steps that made it difficult to merge it with them.
 # We might integrate this in the future, but for now, we use the pipe directly.
-pipe_attacker, forward_scheduler, inverse_scheduler = imprint_utils.load_pipe(modelid=args.modelid_attacker,
+pipe_attacker, forward_scheduler, inverse_scheduler = imprint_utils.load_attacker_pipe(modelid=args.modelid_attacker,
                                                                               scheduler=args.scheduler_attacker,
                                                                               device=DEVICE)
 # differentiable helper pipe used for propagating gradients through the inversion process
